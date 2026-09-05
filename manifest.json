@@ -1,0 +1,22 @@
+{
+  "short_name": "SY Chat",
+  "name": "SY Chat WEB - Messagerie & Meeting",
+  "icons": [
+    {
+      "src": "chat.ico",
+      "type": "image/x-icon",
+      "sizes": "16x16 32x32 48x48 64x64 96x96"
+    },
+    {
+      "src": "chat.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "https://sychatweb.com",
+  "background_color": "#121212",
+  "theme_color": ["#2563eb", "#ef4444", "#eab308", "#334155"],
+  "display": "standalone",
+  "orientation": "portrait"
+}

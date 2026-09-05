@@ -1,0 +1,2183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SY Chat Web -Connect the Earth with SY Chat Web. A simple and secure web chat application. Chat with friends and colleagues in real-time.">
+    <meta name="author" content="Sigui Yohan">
+    <meta name="keywords" content="chat, online chat, secured chat, SY Chat Web, SY Chat, web chat, real-time chat">
+    <title>SY Chat Web</title>
+    <link rel='icon' type='image/x-icon' href='chat.ico'>
+    <link rel='stylesheet' href="systyle.css">
+    <link rel='manifest' href='manifest.json'>
+<style>.camera-button{display:none}body.logged-in .camera-button{display:flex}</style><style>.profile-avatar-preview{width:112px;height:112px;border-radius:999px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#334155;color:#fff;font-size:2.25rem;font-weight:700;border:2px solid #facc15;box-shadow:0 0 24px rgba(59,130,246,.18)}
+.profile-avatar-preview img{width:100%;height:100%;object-fit:cover}
+.message-datetime{margin-top:3px;font-size:10px;line-height:1.2;color:#64748b;font-weight:500;white-space:nowrap;}
+.gif-button{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:999px;background:#334155;color:#f9fafb;border:1px solid #ec4899;cursor:pointer;font-weight:800;font-size:11px;letter-spacing:.2px;transition:transform .2s,background-color .2s,box-shadow .2s}
+.gif-button:hover{background:#475569;transform:translateY(-1px);box-shadow:0 0 14px rgba(236,72,153,.22)}
+.gif-library-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:80}
+.gif-library-panel{width:100%;max-width:680px;max-height:min(760px,92vh);overflow:hidden;background:#0f172a;border:1px solid rgba(236,72,153,.5);border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.5);display:flex;flex-direction:column}
+.gif-library-head{padding:16px;border-bottom:1px solid #334155;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.gif-library-search{flex:1;background:#020617;border:1px solid #475569;border-radius:10px;padding:9px 11px;color:#fff;outline:none}
+.gif-library-search:focus{border-color:#ec4899}
+.gif-library-tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 14px;border-bottom:1px solid #1e293b}
+.gif-library-tab{border:1px solid #334155;background:#1e293b;color:#cbd5e1;border-radius:999px;padding:6px 10px;font-size:11px;white-space:nowrap;cursor:pointer}
+.gif-library-tab.active{background:#be185d;border-color:#f472b6;color:#fff}
+.gif-library-grid{padding:14px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;overflow-y:auto;min-height:220px;align-items:start;isolation:isolate}
+.gif-card{position:relative;display:block;width:100%;min-width:0;min-height:0;aspect-ratio:1/1;padding:0;margin:0;background:#1e293b;border:1px solid #334155;border-radius:11px;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s;box-sizing:border-box;isolation:isolate}
+.gif-card img{display:block;width:100%;height:100%;max-width:100%;max-height:100%;margin:0;padding:0;border:0;object-fit:contain;object-position:center;position:relative;z-index:1;background:#0f172a}
+.gif-card:hover{border-color:#f472b6;transform:translateY(-1px)}
+.gif-card-label{position:absolute;left:0;right:0;bottom:0;padding:18px 7px 6px;background:linear-gradient(transparent,rgba(0,0,0,.72));font-size:10px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gif-empty{grid-column:1/-1;text-align:center;color:#94a3b8;padding:36px 10px;font-size:13px}
+.gif-loading{grid-column:1/-1;text-align:center;color:#cbd5e1;padding:36px 10px;font-size:13px}
+.gif-library-foot{padding:12px 14px;border-top:1px solid #334155;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.gif-powered{display:flex;align-items:center;gap:6px;color:#94a3b8;font-size:10px;white-space:nowrap}
+.gif-powered strong{color:#fff}
+.gif-key-row{display:flex;gap:8px;align-items:center}
+.gif-key-input{width:230px;max-width:45vw;background:#020617;border:1px solid #475569;border-radius:8px;padding:7px 9px;color:#fff;font-size:11px;outline:none}
+.gif-key-input:focus{border-color:#ec4899}
+@media(max-width:520px){.gif-library-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.gif-library-panel{max-height:94vh}.gif-key-row{width:100%}.gif-key-input{flex:1;max-width:none}.gif-library-foot{align-items:stretch;flex-direction:column}.gif-powered{justify-content:center}}</style><style>body:has(#loading-screen:not(.hidden),#auth-modal:not(.hidden),#room-modal:not(.hidden),#camera-modal:not(.hidden),#report-modal:not(.hidden),#notifications-modal:not(.hidden),#profile-modal:not(.hidden),#gif-library-modal:not(.hidden),#admin-modal:not(.hidden)) .upload-wrapper{display:none!important}</style>
+
+
+<style id="strong-media-design">
+/* Strong visible media cards */
+.recorded-message{
+    display:inline-block;
+    max-width:min(100%,380px);
+    padding:3px;
+    border-radius:16px;
+    background:linear-gradient(135deg,#2563eb 0%,#ef4444 50%,#eab308 100%);
+    box-shadow:
+        0 0 10px rgba(37,99,235,.45),
+        0 0 20px rgba(239,68,68,.30),
+        0 0 30px rgba(234,179,8,.22),
+        0 8px 24px rgba(0,0,0,.28);
+    transition:transform .18s ease,box-shadow .18s ease;
+}
+.recorded-message:hover{
+    transform:translateY(-2px);
+    box-shadow:
+        0 0 14px rgba(37,99,235,.60),
+        0 0 26px rgba(239,68,68,.42),
+        0 0 38px rgba(234,179,8,.30),
+        0 10px 28px rgba(0,0,0,.32);
+}
+.recorded-message-inner{
+    display:flex;
+    align-items:center;
+    background:#0b1220;
+    border-radius:13px;
+    padding:9px 10px;
+    overflow:hidden;
+}
+.recorded-message audio{
+    display:block;
+    width:330px;
+    max-width:100%;
+    height:44px;
+    border:0;
+    outline:0;
+    border-radius:9px;
+}
+.recorded-message audio::-webkit-media-controls-panel{background:#172033}
+.recorded-message audio::-webkit-media-controls-current-time-display,
+.recorded-message audio::-webkit-media-controls-time-remaining-display{color:#fff}
+
+/* Photos / images */
+.media-message-inner{
+    padding:7px;
+    align-items:stretch;
+}
+.media-display{
+    display:block;
+    width:auto;
+    height:auto;
+    max-width:min(100%,370px);
+    max-height:430px;
+    margin:0 auto;
+    border-radius:11px;
+    object-fit:contain;
+    background:#020617;
+}
+.image-display{max-height:370px}
+
+/* Videos */
+.segmented-video-list{
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+    width:100%;
+    max-width:min(100%,370px);
+    margin:0 auto;
+    padding:0;
+    background:transparent;
+}
+.segmented-video-list video{
+    display:block;
+    width:100%;
+    height:auto;
+    max-height:430px;
+    border-radius:11px;
+    background:#020617;
+    object-fit:contain;
+}
+
+/* Remove inner borders so the gradient frame is the visible border */
+.message-media,
+.message-media img,
+.message-media video,
+.gif-message-slot,
+.gif-message-slot img,
+.segmented-video-list,
+.segmented-video-list video,
+img.message-image,
+video.message-video,
+.gif-message,
+.gif-message img{
+    border:0!important;
+    outline:0!important;
+}
+
+/* Keep a visible glow around image/video/GIF content */
+.message-media,
+.gif-message-slot,
+.segmented-video-list,
+.gif-message{
+    box-shadow:
+        0 0 8px rgba(37,99,235,.45),
+        0 0 18px rgba(239,68,68,.30),
+        0 0 28px rgba(234,179,8,.20)!important;
+}
+
+@media(max-width:600px){
+    .recorded-message{max-width:100%}
+    .recorded-message audio{width:270px;max-width:100%;height:42px}
+    .media-display,.gif-message-slot,.segmented-video-list{max-width:100%}
+    .media-display,.gif-display,.segmented-video-list video{max-height:370px}
+}
+</style>
+
+
+<style id="admin-hover-badge">
+.admin-avatar-hover{position:relative;display:inline-flex;align-items:center}
+.admin-avatar-hover::after{
+content:"Admin";position:absolute;left:50%;top:calc(100% + 8px);
+transform:translateX(-50%) translateY(-4px);opacity:0;pointer-events:none;
+padding:4px 9px;border-radius:8px;font-size:10px;font-weight:800;color:#fff;
+white-space:nowrap;
+background:linear-gradient(90deg,#2563eb 0 33.333%,#ef4444 33.333% 66.666%,#eab308 66.666% 100%);
+box-shadow:0 7px 18px rgba(0,0,0,.38);
+transition:opacity .16s ease,transform .16s ease;z-index:10000}
+.admin-avatar-hover:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+
+</head>
+<body class="bg-slate-900 text-slate-100 h-screen flex flex-col justify-between overflow-hidden">
+    <div id="loading-screen" class="fixed inset-0 bg-slate-900 flex flex-col items-center justify-center z-50">
+        <img src="chat.png" alt="Chat Logo" class="w-20 h-20 object-contain mb-4 animate-pulse-zoom" onerror="this.style.display='none'">
+        <div class="text-indigo-400 font-bold text-xl animate-pulse">SY Loading... 🚀</div>
+    </div>
+    <div id="auth-modal" class="fixed inset-0 bg-gradient-to-br from-blue-950/80 via-red-950/80 to-yellow-950/80 backdrop-blur-md flex items-center justify-center z-50 p-4 hidden">
+        <div class="p-[3px] rounded-2xl bg-gradient-to-r from-blue-600 via-red-500 to-yellow-400 shadow-2xl w-full max-w-sm">
+            <div class="bg-slate-800 rounded-xl p-6 w-full">
+                <div id="login-form">
+                    <div class="flex justify-center mb-3">
+                        <div class="bg-indigo-600/20 p-2 rounded-full flex items-center justify-center border border-red-500">
+                            <img src="chat.png" alt="Chat Logo" class="w-8 h-8 object-contain">
+                        </div>
+                    </div>
+                    <h2 class="text-xl font-bold mb-4 text-center text-indigo-400">SY Chat Web 🌐</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Username</label>
+                            <input type="text" id="login-username" class="w-full bg-slate-900 border-2 border-blue-500 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-yellow-400" autofocus>
+                            <p id="login-user-error" class="text-red-400 text-xs mt-1 hidden"></p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Password</label>
+                            <input type="password" id="login-password" class="w-full bg-slate-900 border-2 border-blue-500 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-yellow-400">
+                            <p id="login-pass-error" class="text-red-400 text-xs mt-1 hidden"></p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mt-6">
+                        <button onclick="switchMode('create')" class="hover:text-button text-button hover:text-borders text-borders font-medium">Create Account</button>
+                        <button onclick="handleLogin()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition border border-yellow-400">Login</button>
+                    </div>
+                </div>
+                <div id="create-form" class="hidden">
+                    <div class="flex justify-center mb-3">
+                        <div class="bg-indigo-600/20 p-2 rounded-full flex items-center justify-center border border-red-500">
+                            <img src="chat.png" alt="Chat Logo" class="w-8 h-8 object-contain">
+                        </div>
+                    </div>
+                    <h2 class="text-xl font-bold mb-4 text-center text-indigo-400">Create Account ✨</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Username</label>
+                            <input type="text" id="create-username" class="w-full bg-slate-900 border-2 border-blue-500 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-yellow-400">
+                            <p id="create-user-error" class="text-red-400 text-xs mt-1 hidden"></p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Password</label>
+                            <input type="password" id="create-password" class="w-full bg-slate-900 border-2 border-blue-500 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-yellow-400">
+                            <p id="create-pass-error" class="text-red-400 text-xs mt-1 hidden"></p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mt-6">
+                        <button onclick="switchMode('login')" class="text-button text-borders hover:text-button hover:text-borders font-medium">Back to Login</button>
+                        <button onclick="handleCreateAccount()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition border border-yellow-400">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="room-modal" class="fixed inset-0 bg-gradient-to-br from-blue-950/80 via-red-950/80 to-yellow-950/80 backdrop-blur-md flex items-center justify-center z-50 p-4 hidden">
+        <div class="p-[3px] rounded-2xl bg-gradient-to-r from-blue-600 via-red-500 to-yellow-400 shadow-2xl w-full max-w-sm">
+            <div class="bg-slate-800 rounded-xl p-6 w-full">
+                <h2 class="text-xl font-bold mb-2 text-center text-indigo-400">🚪 Join a Chat Room</h2>
+                <p class="text-xs text-slate-400 text-center mb-4">Type a room name to chat.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Chat Room Name</label>
+                        <input type="text" id="room-name-input" placeholder="e.g. general, gaming" class="w-full bg-slate-900 border-2 border-blue-500 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-yellow-400">
+                        <p id="room-error" class="text-red-400 text-xs mt-1 hidden"></p>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mt-6">
+                    <button onclick="exitWebsite()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-2 rounded-lg font-medium text-sm transition border border-red-500">Exit</button>
+                    <button onclick="joinRoom()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition border border-yellow-400">Join Room</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="report-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 w-full max-w-sm space-y-4 shadow-2xl">
+            <h3 class="text-base font-bold text-red-400 flex items-center gap-2">🚨 Report Message</h3>
+            <p class="text-xs text-slate-400">Please state why you are reporting this message for cyberbullying or harassment:</p>
+            <textarea id="report-reason-input" rows="3" placeholder="Describe the issue..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-red-500 resize-none"></textarea>
+            <div class="flex justify-end gap-2">
+                <button onclick="closeReportModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-medium transition">Cancel</button>
+                <button onclick="submitReport()" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition">Submit Report</button>
+            </div>
+        </div>
+    </div>
+    <div id="notifications-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 w-full max-w-md space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="text-base font-bold text-indigo-400 flex items-center gap-2">🔔 Notifications</h3>
+                <button onclick="closeNotificationsModal()" class="text-slate-400 hover:text-white text-xs">✕</button>
+            </div>
+            <div id="notifications-list" class="space-y-2 max-h-60 overflow-y-auto">
+                <p class="text-xs text-slate-400 italic">No notifications yet.</p>
+            </div>
+            <div class="flex justify-end">
+                <button onclick="closeNotificationsModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-medium transition">Close</button>
+            </div>
+        </div>
+    </div>
+    <div id="profile-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-slate-800 border border-blue-500/50 rounded-2xl p-6 w-full max-w-md space-y-5 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="text-base font-bold text-indigo-400">👤 My Profile</h3>
+                <button type="button" onclick="closeProfileModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
+            </div>
+            <div class="flex flex-col items-center gap-3">
+                <div id="profile-avatar-preview" class="profile-avatar-preview">
+                    <span id="profile-avatar-initial">?</span>
+                </div>
+                <div class="flex gap-2 flex-wrap justify-center">
+                    <button type="button" onclick="takeProfilePhoto()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-lg text-xs font-medium border border-yellow-400">📸 Take Photo</button>
+                    <button type="button" onclick="openProfileAvatarPicker()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-2 rounded-lg text-xs font-medium border border-blue-500">🖼️ Upload Photo/GIF</button>
+                    <button type="button" onclick="removeProfileAvatar()" class="bg-red-700/80 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-xs font-medium">🗑️ Remove</button>
+                </div>
+                <input type="file" id="profile-avatar-input" accept="image/*,.gif" hidden onchange="handleProfileAvatarUpload(event)">
+                <p class="text-[11px] text-slate-400 text-center">Photos and animated GIFs are supported. Your avatar is stored locally in this browser.</p>
+            </div>
+            <div class="border-t border-slate-700 pt-4 space-y-3">
+                <h4 class="text-sm font-bold text-slate-200">🔐 Change Password</h4>
+                <input id="profile-current-password" type="password" autocomplete="current-password" placeholder="Current password" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                <input id="profile-new-password" type="password" autocomplete="new-password" placeholder="New password (6+ characters)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                <input id="profile-confirm-password" type="password" autocomplete="new-password" placeholder="Confirm new password" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                <p id="profile-password-error" class="text-red-400 text-xs hidden"></p>
+            </div>
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="closeProfileModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-2 rounded-lg text-xs font-medium">Cancel</button>
+                <button type="button" onclick="saveProfileChanges()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-xs font-bold border border-yellow-400">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    <div id="gif-library-modal" class="gif-library-modal hidden" onclick="closeGifLibraryOnBackdrop(event)">
+        <div class="gif-library-panel" role="dialog" aria-modal="true" aria-labelledby="gif-library-title">
+            <div class="gif-library-head">
+                <div>
+                    <h3 id="gif-library-title" class="text-base font-bold text-pink-400">🎞️ GIF Library</h3>
+                    <p class="text-[11px] text-slate-400 mt-1">Search millions of GIFs online and send one instantly.</p>
+                </div>
+                <button type="button" onclick="closeGifLibrary()" class="text-slate-400 hover:text-white text-lg">✕</button>
+            </div>
+            <div class="p-3 pb-0">
+                <input id="gif-library-search" class="gif-library-search w-full" type="search" placeholder="Search GIPHY..." autocomplete="off" oninput="handleGifSearchInput()">
+            </div>
+            <div id="gif-library-tabs" class="gif-library-tabs"></div>
+            <div id="gif-library-grid" class="gif-library-grid"></div>
+            <div class="gif-library-foot">
+                <div class="gif-powered">Powered by <strong>GIPHY</strong></div>
+                    <div class="gif-key-row">
+                        <button type="button" onclick="closeGifLibrary()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-2 rounded-lg text-xs">Close</button>
+                    </div>
+            </div>
+        </div>
+    </div>
+    <div id="admin-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-slate-800 border border-yellow-500/50 rounded-xl p-6 w-full max-w-lg space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="text-base font-bold text-amber-400 flex items-center gap-2">🛡️ Admin Panel - Room Reports</h3>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-xs">✕</button>
+            </div>
+            <div class="border border-slate-700 rounded-lg p-3 space-y-3">
+                <div class="flex justify-between items-center">
+                    <h4 class="text-sm font-bold text-amber-300">⚙️ Room Management</h4>
+                    <button onclick="deleteCurrentRoom()" class="bg-red-700 hover:bg-red-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition">
+                        🗑️ Delete Room
+                    </button>
+                </div>
+                <p class="text-[11px] text-slate-400">Ban users from <span id="admin-room-name" class="text-indigo-300"></span> or permanently delete this room.</p>
+                <div id="admin-members-list" class="space-y-2 max-h-40 overflow-y-auto pr-1">
+                    <p class="text-xs text-slate-400 italic">No users to manage.</p>
+                </div>
+            </div>
+            <div id="admin-reports-list" class="space-y-3 max-h-85 overflow-y-auto pr-1">
+                <p class="text-xs text-slate-400 italic">No reports submitted for this room.</p>
+            </div>
+            <div class="flex justify-end">
+                <button onclick="closeAdminModal()" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-medium transition">Close</button>
+            </div>
+        </div>
+    </div>
+    <header class="app-header bg-slate-800 px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <h1 class="font-bold text-indigo-400" id="header-title">SY Chat Web</h1>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3">
+            <span id="current-room-display" class="text-xs bg-indigo-950 border border-blue-500 px-2.5 py-1 rounded-full text-indigo-300"></span>
+            <div class="relative" id="user-dropdown-container" onmouseenter="startHoverTimer()" onmouseleave="startLeaveTimer()">
+                <span id="current-user-display" class="text-xs bg-slate-700 border border-yellow-400 px-2.5 py-1 rounded-full text-slate-300 cursor-pointer flex items-center gap-1.5"></span>
+                <div id="dropdown-menu" class="absolute right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl p-1.5 z-50 hidden flex-col gap-1">
+                    <div onclick="openNotificationsModal()" class="relative flex items-center gap-2 px-2.5 py-1.5 hover:bg-slate-700/60 rounded-lg cursor-pointer transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-indigo-400 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                        </svg>
+                        <span class="text-xs text-slate-200 font-medium">Notifications</span>
+                    </div>
+                    <div onclick="openProfileModal()" class="relative flex items-center gap-2 px-2.5 py-1.5 hover:bg-slate-700/60 rounded-lg cursor-pointer transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-blue-400 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0-8a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 10c-5 0-9 2.24-9 5v3h18v-3c0-2.76-4-5-9-5Zm-7 6v-1c0-1.39 3.13-3 7-3s7 1.61 7 3v1H5Z"/>
+                        </svg>
+                        <span class="text-xs text-slate-200 font-medium">Profile</span>
+                    </div>
+                    <div id="admin-menu-option" onclick="openAdminModal()" class="relative hidden items-center gap-2 px-2.5 py-1.5 hover:bg-amber-500/20 rounded-lg cursor-pointer transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                        </svg>
+                        <span class="text-xs text-amber-300 font-medium">Admin Panel</span>
+                    </div>
+                    <div class="relative flex items-center gap-2 px-2.5 py-1.5 hover:bg-slate-700/60 rounded-lg cursor-pointer transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-yellow-400 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/>
+                        </svg>
+                        <span class="text-xs text-slate-200 font-medium">Events</span>
+                    </div>
+                    <div class="border-t border-slate-700/60 my-0.5"></div>
+                    <div onclick="exitWebsite()" class="relative flex items-center gap-2 px-2.5 py-1.5 hover:bg-red-600/20 text-red-400 rounded-lg cursor-pointer transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                        </svg>
+                        <span class="text-xs font-medium">Log out</span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="leaveRoom()" class="bg-red-600/80 hover:bg-red-600 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition border border-red-400">Quit</button>
+        </div>
+    </header>
+    <main class="flex-1 overflow-y-auto p-4 space-y-4" id="chat-messages">
+    </main>
+    <div id="camera-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 w-full max-w-md shadow-2xl">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-base font-bold text-indigo-400">📷 Camera</h3>
+                <button type="button" onclick="closeCameraModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
+            </div>
+            <div class="relative rounded-xl overflow-hidden bg-black border border-slate-700">
+                <video id="camera-preview" autoplay playsinline muted class="w-full aspect-video object-cover"></video>
+                <span id="camera-recording-status" class="hidden absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">● Recording <span id="camera-recording-timer">00:00</span></span>
+            </div>
+            <canvas id="camera-canvas" class="hidden"></canvas>
+            <div class="flex gap-2 mt-4">
+                <button type="button" id="camera-photo-btn" onclick="setCameraMode('photo')" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-lg text-sm font-medium border border-yellow-400">📸 Photo</button>
+                <button type="button" id="camera-video-btn" onclick="setCameraMode('video')" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-2 rounded-lg text-sm font-medium border border-red-500">🎥 Video</button>
+            </div>
+            <button type="button" id="camera-action-btn" onclick="cameraAction()" class="w-full mt-3 bg-gradient-to-r from-blue-600 via-red-500 to-yellow-400 text-white px-4 py-2.5 rounded-xl font-bold text-sm">Take Photo</button>
+        </div>
+    </div>
+    <footer class="app-footer bg-slate-800 px-4 py-3">
+        <div class="max-w-4xl mx-auto flex items-end gap-2">
+            <input type="file" id="upload-input" accept="image/*,video/*" hidden onchange="handleUpload(event)">
+            <div class="upload-wrapper" id="upload-wrapper">
+                <button type="button" id="upload-btn" class="upload-button" title="Upload" aria-label="Upload" aria-haspopup="menu" aria-expanded="false" onclick="toggleUploadMenu(event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2-2V5h14v14H5v-6H3v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5Zm-5.5 4.5-2.5 3.01-1.75-2.1L6 15h8l-2.5-3.5ZM8 10.5A1.5 1.5 0 1 0 8 7.5a1.5 1.5 0 0 0 0 3Z"/>
+                    </svg>
+                                    </button>
+                <div id="upload-menu" class="upload-menu" role="menu" aria-label="Upload options">
+                    <button type="button" class="upload-option upload-image-option" onclick="openImagePicker()" role="menuitem">
+                        <span class="upload-option-icon">🖼️</span>
+                        <span>Image</span>
+                    </button>
+                    <button type="button" class="upload-option upload-video-option" onclick="openVideoPicker()" role="menuitem">
+                        <span class="upload-option-icon">🎥</span>
+                        <span>Vidéo</span>
+                    </button>
+                </div>
+            </div>
+            <button type="button" id="camera-btn" onclick="openCameraModal()" title="Take photo or video" aria-label="Take photo or video" class="camera-button bg-slate-700 hover:bg-slate-600 text-slate-300 p-2.5 rounded-full transition flex items-center justify-center border border-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 4 7.5 6H5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-2.5L15 4H9Zm3 13a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+                </svg>
+            </button>
+            <button id="record-btn" onclick="toggleRecorder()" title="Record voice message" aria-label="Record voice message" class="bg-slate-700 hover:bg-slate-600 text-slate-300 p-2.5 rounded-full transition flex items-center justify-center border border-red-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21H9v2h6v-2h-2v-3.08A7 7 0 0 0 19 11h-2z"/>
+                </svg>
+            </button>
+            <span id="recording-status" class="hidden text-xs text-red-400 font-medium whitespace-nowrap">
+                ● Recording <span id="recording-timer">00:00</span>
+            </span>
+            <button type="button" id="gif-btn" onclick="openGifLibrary()" title="GIF Library" aria-label="GIF Library" class="gif-button">GIF</button>
+            <textarea id="message-input" rows="1" placeholder="Write a message..." class="flex-1 bg-slate-900 border-2 border-blue-500 rounded-2xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-400 resize-none max-h-32"></textarea>
+            <button id="send-btn" onclick="submitMessage()" class="bg-indigo-600 hover:bg-indigo-500 text-white p-2.5 rounded-full transition flex items-center justify-center gradient-glow">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </button>
+        </div>
+    </footer>
+    <script>
+        let currentUser = "";
+        let currentRoom = "";
+        let chatChannel = null;
+        let isAdmin = false;
+        let leaveCloseTimer = null;
+        let uploadMenuTimer = null;
+        let mediaRecorder = null;
+        let recordedAudioChunks = [];
+        let recordingTimerInterval = null;
+        let recordingStartedAt = 0;
+        let cameraStream = null;
+        let cameraRecorder = null;
+        let cameraChunks = [];
+        let cameraMode = "photo";
+        let cameraRecordingStartedAt = 0;
+        let cameraRecordingTimer = null;
+        // Long-video recorder state. A recording is split into small native
+        // browser segments so RAM never has to hold the entire video.
+        const CAMERA_SEGMENT_MS = 30000;
+        let cameraSegmentIds = [];
+        let cameraSegmentNumber = 0;
+        let cameraSegmentTimer = null;
+        let cameraStopRequested = false;
+        let cameraFinalizing = false;
+        let cameraRecordingActive = false;
+        let cameraSegmentMimeType = "";
+        const MEDIA_DB_NAME = "sy_chat_media_db";
+        const MEDIA_STORE_NAME = "videos";
+        const PROFILE_STORE_NAME = "profile_avatars";
+        const GIF_STORE_NAME = "gifs";
+        const GIPHY_API_BASE = "https://api.giphy.com/v1/gifs";
+        const GIPHY_API_KEY_STORAGE = "sy_giphy_api_key";
+        const GIPHY_CUSTOMER_ID_STORAGE = "sy_giphy_customer_id";
+        const GIF_CATEGORIES = ["Trending", "Funny", "Reactions", "Love", "Sad", "Celebration", "Cool"];
+        let activeGifCategory = "Trending";
+        let gifSearchTimer = null;
+        let gifRequestId = 0;
+        let currentGiphyResults = [];
+        let mediaDbPromise = null;
+
+        function openMediaDb() {
+            if (!window.indexedDB) return Promise.reject(new Error("IndexedDB is not supported."));
+            if (mediaDbPromise) return mediaDbPromise;
+            mediaDbPromise = new Promise((resolve, reject) => {
+                const request = indexedDB.open(MEDIA_DB_NAME, 3);
+                request.onupgradeneeded = () => {
+                    const db = request.result;
+                    if (!db.objectStoreNames.contains(MEDIA_STORE_NAME)) {
+                        db.createObjectStore(MEDIA_STORE_NAME);
+                    }
+                    if (!db.objectStoreNames.contains(PROFILE_STORE_NAME)) {
+                        db.createObjectStore(PROFILE_STORE_NAME);
+                    }
+                    if (!db.objectStoreNames.contains(GIF_STORE_NAME)) {
+                        db.createObjectStore(GIF_STORE_NAME);
+                    }
+                };
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error || new Error("Could not open media storage."));
+            });
+            return mediaDbPromise;
+        }
+
+        async function saveVideoBlob(blob) {
+            const id = `video_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+            const db = await openMediaDb();
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction(MEDIA_STORE_NAME, "readwrite");
+                tx.objectStore(MEDIA_STORE_NAME).put(blob, id);
+                tx.oncomplete = resolve;
+                tx.onerror = () => reject(tx.error || new Error("Could not save video."));
+                tx.onabort = () => reject(tx.error || new Error("Could not save video."));
+            });
+            return id;
+        }
+
+        async function getVideoBlob(id) {
+            if (!id) return null;
+            try {
+                const db = await openMediaDb();
+                return await new Promise((resolve, reject) => {
+                    const tx = db.transaction(MEDIA_STORE_NAME, "readonly");
+                    const request = tx.objectStore(MEDIA_STORE_NAME).get(id);
+                    request.onsuccess = () => resolve(request.result || null);
+                    request.onerror = () => reject(request.error || new Error("Could not load video."));
+                });
+            } catch (error) {
+                console.error("Video storage error:", error);
+                return null;
+            }
+        }
+
+        function getVideoUrlFromMessage(message) {
+            if (message.text && message.text.startsWith("data:")) return message.text;
+            return "";
+        }
+
+        function getAppData() {
+            try {
+                const raw = localStorage.getItem("sy_sql_db");
+                if (!raw) return { users: {}, profiles: {}, messages: [], reports: [], notifications: {}, bannedUsers: {} };
+                const parsed = JSON.parse(raw);
+                if (!parsed.users) parsed.users = {};
+                 if (!parsed.profiles || typeof parsed.profiles !== "object") parsed.profiles = {};
+                if (!parsed.messages) parsed.messages = [];
+                if (!parsed.reports) parsed.reports = [];
+                if (!parsed.notifications || typeof parsed.notifications !== 'object') parsed.notifications = {};
+                if (!parsed.bannedUsers || typeof parsed.bannedUsers !== 'object') parsed.bannedUsers = {};
+                return parsed;
+            } catch (e) {
+                return { users: {}, profiles: {}, messages: [], reports: [], notifications: {}, bannedUsers: {} };
+            }
+        }
+        function saveAppData(data) {
+            localStorage.setItem("sy_sql_db", JSON.stringify(data));
+        }
+        window.onload = function() {
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('auth-modal').classList.remove('hidden');
+            }, 1000);
+        };
+        function switchMode(mode) {
+            if(mode === 'create') {
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('create-form').classList.remove('hidden');
+            } else {
+                document.getElementById('create-form').classList.add('hidden');
+                document.getElementById('login-form').classList.remove('hidden');
+            }
+        }
+        function validateCredentials(user, pass, userErrEl, passErrEl) {
+            userErrEl.classList.add('hidden');
+            passErrEl.classList.add('hidden');
+            const letterCount = (user.match(/[a-zA-Z]/g) || []).length;
+            const spaceCount = (user.match(/ /g) || []).length;
+            const isValidFormat = /^[a-zA-Z0-9_]+( [a-zA-Z0-9_]+)?$/.test(user);
+            if (!user) {
+                userErrEl.innerText = "Username cannot be blank!";
+                userErrEl.classList.remove('hidden');
+                return false;
+            }
+            if (user.length < 4 || user.length > 20 || letterCount < 4 || spaceCount > 1 || !isValidFormat) {
+                userErrEl.innerText = "Username must be 4-20 characters, contain at least 4 letters, and allow a maximum of 1 space.";
+                userErrEl.classList.remove('hidden');
+                return false;
+            }
+            if (!pass) {
+                passErrEl.innerText = "Password cannot be blank!";
+                passErrEl.classList.add('hidden');
+                return false;
+            }
+            if (pass.length < 6) {
+                passErrEl.innerText = "Password must be at least 6 characters long.";
+                passErrEl.classList.add('hidden');
+                return false;
+            }
+            return true;
+        }
+        function handleLogin() {
+            const user = document.getElementById('login-username').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+            const userErr = document.getElementById('login-user-error');
+            const passErr = document.getElementById('login-pass-error');
+            if (!validateCredentials(user, pass, userErr, passErr)) return;
+            const data = getAppData();
+            const storedPass = data.users[user];
+            if (storedPass !== undefined && storedPass === pass) {
+                proceedToRoomSelection(user);
+            } else {
+                passErr.innerText = "Invalid username or password!";
+                passErr.classList.remove('hidden');
+            }
+        }
+        function handleCreateAccount() {
+            const user = document.getElementById('create-username').value.trim();
+            const pass = document.getElementById('create-password').value.trim();
+            const userErr = document.getElementById('create-user-error');
+            const passErr = document.getElementById('create-pass-error');
+            if (!validateCredentials(user, pass, userErr, passErr)) return;
+            const data = getAppData();
+            if (data.users[user] !== undefined) {
+                userErr.innerText = "This username is already taken!";
+                userErr.classList.remove('hidden');
+                return;
+            }
+            data.users[user] = pass;
+            saveAppData(data);
+            proceedToRoomSelection(user);
+        }
+        function getUserProfile(username) {
+            const data = getAppData();
+            if (!data.profiles) data.profiles = {};
+            if (!data.profiles[username]) data.profiles[username] = { avatar: "", avatarId: "", avatarType: "" };
+            return data.profiles[username];
+        }
+
+        const profileAvatarUrlCache = new Map();
+        async function getProfileAvatarUrl(username) {
+            const profile = getUserProfile(username || "");
+            if (!profile) return "";
+            if (profile.avatarId) {
+                if (profileAvatarUrlCache.has(profile.avatarId)) return profileAvatarUrlCache.get(profile.avatarId);
+                try {
+                    const db = await openMediaDb();
+                    const blob = await new Promise((resolve, reject) => {
+                        const tx = db.transaction(PROFILE_STORE_NAME, "readonly");
+                        const req = tx.objectStore(PROFILE_STORE_NAME).get(profile.avatarId);
+                        req.onsuccess = () => resolve(req.result || null);
+                        req.onerror = () => reject(req.error || new Error("Could not load avatar."));
+                    });
+                    if (blob) {
+                        const url = URL.createObjectURL(blob);
+                        profileAvatarUrlCache.set(profile.avatarId, url);
+                        return url;
+                    }
+                } catch (error) {
+                    console.error("Profile avatar storage error:", error);
+                }
+            }
+            return profile.avatar || "";
+        }
+
+        async function saveProfileAvatarBlob(blob) {
+            const id = `avatar_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+            const db = await openMediaDb();
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction(PROFILE_STORE_NAME, "readwrite");
+                tx.objectStore(PROFILE_STORE_NAME).put(blob, id);
+                tx.oncomplete = resolve;
+                tx.onerror = () => reject(tx.error || new Error("Could not save avatar."));
+                tx.onabort = () => reject(tx.error || new Error("Could not save avatar."));
+            });
+            return id;
+        }
+
+        async function deleteProfileAvatarBlob(id) {
+            if (!id) return;
+            try {
+                const db = await openMediaDb();
+                await new Promise((resolve, reject) => {
+                    const tx = db.transaction(PROFILE_STORE_NAME, "readwrite");
+                    tx.objectStore(PROFILE_STORE_NAME).delete(id);
+                    tx.oncomplete = resolve;
+                    tx.onerror = () => reject(tx.error || new Error("Could not delete avatar."));
+                });
+            } catch (error) { console.error("Avatar cleanup error:", error); }
+            const oldUrl = profileAvatarUrlCache.get(id);
+            if (oldUrl) URL.revokeObjectURL(oldUrl);
+            profileAvatarUrlCache.delete(id);
+        }
+
+        async function saveGifBlob(blob) {
+            const id = `gif_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+            const db = await openMediaDb();
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction(GIF_STORE_NAME, "readwrite");
+                tx.objectStore(GIF_STORE_NAME).put(blob, id);
+                tx.oncomplete = resolve;
+                tx.onerror = () => reject(tx.error || new Error("Could not save GIF."));
+                tx.onabort = () => reject(tx.error || new Error("Could not save GIF."));
+            });
+            return id;
+        }
+        async function getGifBlob(id) {
+            if (!id) return null;
+            try {
+                const db = await openMediaDb();
+                return await new Promise((resolve, reject) => {
+                    const tx = db.transaction(GIF_STORE_NAME, "readonly");
+                    const req = tx.objectStore(GIF_STORE_NAME).get(id);
+                    req.onsuccess = () => resolve(req.result || null);
+                    req.onerror = () => reject(req.error || new Error("Could not load GIF."));
+                });
+            } catch (error) { console.error("GIF storage error:", error); return null; }
+        }
+        async function deleteGifBlob(id) {
+            if (!id) return;
+            try {
+                const db = await openMediaDb();
+                await new Promise((resolve, reject) => {
+                    const tx = db.transaction(GIF_STORE_NAME, "readwrite");
+                    tx.objectStore(GIF_STORE_NAME).delete(id);
+                    tx.oncomplete = resolve;
+                    tx.onerror = () => reject(tx.error || new Error("Could not delete GIF."));
+                });
+            } catch (error) { console.error("GIF cleanup error:", error); }
+            const url = gifUrlCache.get(id);
+            if (url) URL.revokeObjectURL(url);
+            gifUrlCache.delete(id);
+        }
+        function getGiphyApiKey() {
+            return "jnqiOkNCQ4ZcYMfbGzQC6wRhDyDxbWl7";
+        }
+        function getGiphyCustomerId() {
+            let id = (localStorage.getItem(GIPHY_CUSTOMER_ID_STORAGE) || "").trim();
+            if (!id) {
+                id = `sy_${crypto?.randomUUID ? crypto.randomUUID() : `${Date.now()}_${Math.random().toString(36).slice(2)}`}`;
+                localStorage.setItem(GIPHY_CUSTOMER_ID_STORAGE, id);
+            }
+            return id;
+        }
+        function renderGifTabs() {
+            const tabs = document.getElementById("gif-library-tabs");
+            if (!tabs) return;
+            tabs.innerHTML = GIF_CATEGORIES.map(category => `<button type="button" class="gif-library-tab ${category === activeGifCategory ? "active" : ""}" onclick="selectGifCategory('${category}')">${category}</button>`).join("");
+        }
+        function selectGifCategory(category) {
+            activeGifCategory = GIF_CATEGORIES.includes(category) ? category : "Trending";
+            const search = document.getElementById("gif-library-search");
+            if (search) search.value = "";
+            loadOnlineGifs();
+        }
+        function handleGifSearchInput() {
+            clearTimeout(gifSearchTimer);
+            gifSearchTimer = setTimeout(() => loadOnlineGifs(), 300);
+        }
+        function openGifLibrary() {
+            if (!currentUser || !chatChannel) { alert("Join a chat room before using the GIF library."); return; }
+            const modal = document.getElementById("gif-library-modal");
+            if (!modal) return;
+            modal.classList.remove("hidden");
+            const search = document.getElementById("gif-library-search");
+            if (search) { search.value = ""; setTimeout(() => search.focus(), 0); }
+            activeGifCategory = "Trending";
+            renderGifTabs();
+            loadOnlineGifs();
+        }
+        function closeGifLibrary() {
+            const modal = document.getElementById("gif-library-modal");
+            if (modal) modal.classList.add("hidden");
+        }
+        function closeGifLibraryOnBackdrop(event) {
+            if (event.target && event.target.id === "gif-library-modal") closeGifLibrary();
+        }
+        function getGiphyQuery() {
+            const value = (document.getElementById("gif-library-search")?.value || "").trim();
+            if (value) return value.slice(0, 50);
+            const queries = { Funny:"funny", Reactions:"reaction", Love:"love", Sad:"sad", Celebration:"celebration", Cool:"cool" };
+            return queries[activeGifCategory] || "";
+        }
+        async function loadOnlineGifs() {
+            const grid = document.getElementById("gif-library-grid");
+            if (!grid) return;
+            renderGifTabs();
+            const apiKey = getGiphyApiKey();
+            if (!apiKey) {
+                grid.innerHTML = `<div class="gif-empty"><div class="text-white font-semibold mb-2">Connect GIPHY</div><div>Enter your GIPHY API key below to load the online GIF library.</div></div>`;
+                return;
+            }
+            const requestId = ++gifRequestId;
+            grid.innerHTML = `<div class="gif-loading">Loading GIFs…</div>`;
+            try {
+                const search = (document.getElementById("gif-library-search")?.value || "").trim();
+                const endpoint = search ? `${GIPHY_API_BASE}/search` : `${GIPHY_API_BASE}/trending`;
+                const params = new URLSearchParams({ api_key: apiKey, limit: "24", rating: "g", bundle: "messaging_non_clips", lang: "en" });
+                if (search) params.set("q", search.slice(0, 50));
+                const response = await fetch(`${endpoint}?${params.toString()}`);
+                const payload = await response.json().catch(() => ({}));
+                if (requestId !== gifRequestId) return;
+                if (!response.ok || !Array.isArray(payload.data)) throw new Error(payload?.meta?.msg || `GIPHY request failed (${response.status}).`);
+                currentGiphyResults = payload.data;
+                renderOnlineGifs(payload.data);
+            } catch (error) {
+                console.error("GIPHY request error:", error);
+                grid.innerHTML = `<div class="gif-empty"><div class="text-red-300 font-semibold mb-2">Could not load GIFs</div><div>${escapeHtml(error.message || "Check your API key and internet connection.")}</div></div>`;
+            }
+        }
+        function renderOnlineGifs(items) {
+            const grid = document.getElementById("gif-library-grid");
+            if (!grid) return;
+            if (!items.length) {
+                grid.innerHTML = `<div class="gif-empty">No GIFs found.</div>`;
+                return;
+            }
+            grid.innerHTML = "";
+            items.forEach(item => {
+                const images = item.images || {};
+                const preview = images.fixed_width_small || images.fixed_height_small || images.fixed_width || images.fixed_height || images.original;
+                const full = images.original || images.downsized_large || images.fixed_width || images.fixed_height;
+                if (!preview?.url || !full?.url) return;
+                const card = document.createElement("button");
+                card.type = "button";
+                card.className = "gif-card";
+                card.title = item.title || "GIF";
+                card.onclick = () => sendOnlineGif(item);
+                const img = document.createElement("img");
+                img.loading = "lazy";
+                img.alt = item.alt_text || item.title || "GIF";
+                img.decoding = "async";
+                img.src = preview.url;
+                card.appendChild(img);
+                const label = document.createElement("div");
+                label.className = "gif-card-label";
+                label.textContent = item.title || "GIF";
+                card.appendChild(label);
+                grid.appendChild(card);
+            });
+        }
+        async function sendOnlineGif(item) {
+            if (!currentUser || !chatChannel || !item) return;
+            const images = item.images || {};
+            const media = images.original || images.downsized_large || images.fixed_width || images.fixed_height;
+            if (!media?.url) return;
+            const msg = {
+                user_name: currentUser,
+                text: "",
+                isGif: true,
+                gifProvider: "giphy",
+                giphyId: item.id || "",
+                gifUrl: media.url,
+                gifPreviewUrl: (images.fixed_width || images.fixed_height || media).url || media.url,
+                gifName: item.title || "GIF",
+                gifRating: "g",
+                gifAnalytics: item.analytics || null
+            };
+            registerGiphyAction(item, "onclick");
+            chatChannel.postMessage(msg);
+            displayMessage(msg);
+            saveMessageToStorage(currentUser, "", false, false, "", false, "", "", [], true, msg.giphyId, "image/gif", msg.gifName, msg.gifUrl, msg.gifPreviewUrl, "giphy", msg.gifAnalytics);
+            registerGiphyAction(item, "onsent");
+            closeGifLibrary();
+        }
+        function registerGiphyAction(item, action) {
+            const url = item?.analytics?.[action]?.url || item?.analytics?.[action];
+            if (!url) return;
+            try {
+                const pingback = new URL(url);
+                pingback.searchParams.set("ts", Date.now().toString());
+                pingback.searchParams.set("customer_id", getGiphyCustomerId());
+                fetch(pingback.toString(), { method: "GET", keepalive: true }).catch(() => {});
+            } catch (error) {
+                console.warn("GIPHY analytics error:", error);
+            }
+        }
+
+        function getAvatarMarkup(username, sizeClass = "w-9 h-9") {
+            const initial = username ? username.charAt(0).toUpperCase() : "?";
+            const profile = getUserProfile(username || "");
+            const colorClass = getAvatarColor(username || "Unknown");
+            const placeholder = `<div class="${colorClass} text-white ${sizeClass} rounded-full flex items-center justify-center font-bold text-sm border border-yellow-400/50">${escapeHtml(initial)}</div>`;
+            if (profile.avatar || profile.avatarId) {
+                const holderId = `avatar-holder-${Math.random().toString(36).slice(2)}`;
+                setTimeout(async () => {
+                    const holder = document.getElementById(holderId);
+                    if (!holder) return;
+                    const url = await getProfileAvatarUrl(username);
+                    if (url) holder.outerHTML = `<img src="${escapeHtml(url)}" alt="${escapeHtml(username || "User")} avatar" class="${sizeClass} rounded-full object-cover border border-yellow-400/50">`;
+                }, 0);
+                return `<div id="${holderId}" class="${colorClass} text-white ${sizeClass} rounded-full flex items-center justify-center font-bold text-sm border border-yellow-400/50">${escapeHtml(initial)}</div>`;
+            }
+            return placeholder;
+        }
+
+        async function refreshCurrentUserDisplay() {
+            const el = document.getElementById("current-user-display");
+            if (!el || !currentUser) return;
+            const adminBadge = isAdmin
+                ? `<span class="admin-avatar-hover"><span class="text-amber-300 font-bold">🛡️</span></span>`
+                : "";
+            const profile = getUserProfile(currentUser);
+            const url = await getProfileAvatarUrl(currentUser);
+            const avatar = url ? `<img src="${escapeHtml(url)}" class="w-5 h-5 rounded-full object-cover" alt="">` : "👤";
+            el.innerHTML = `${avatar} ${escapeHtml(currentUser)} ${adminBadge}`;
+        }
+
+        async function openProfileModal() {
+            if (!currentUser) return;
+            const profile = getUserProfile(currentUser);
+            const preview = document.getElementById("profile-avatar-preview");
+            const colorClass = getAvatarColor(currentUser);
+            preview.className = `profile-avatar-preview ${colorClass}`;
+            preview.innerHTML = `<span>${escapeHtml(currentUser.charAt(0).toUpperCase())}</span>`;
+            const url = await getProfileAvatarUrl(currentUser);
+            if (url) preview.innerHTML = `<img src="${escapeHtml(url)}" alt="Profile avatar" class="w-full h-full object-cover">`;
+            document.getElementById("profile-current-password").value = "";
+            document.getElementById("profile-new-password").value = "";
+            document.getElementById("profile-confirm-password").value = "";
+            document.getElementById("profile-password-error").classList.add("hidden");
+            document.getElementById("profile-modal").classList.remove("hidden");
+        }
+        function closeProfileModal() {
+            document.getElementById("profile-modal").classList.add("hidden");
+        }
+        function openProfileAvatarPicker() {
+            const input = document.getElementById("profile-avatar-input");
+            if (input) { input.value = ""; input.click(); }
+        }
+
+        async function handleProfileAvatarUpload(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const isImage = file.type.startsWith("image/") || /\.gif$/i.test(file.name);
+            if (!isImage) {
+                alert("Please choose a photo or GIF image.");
+                event.target.value = "";
+                return;
+            }
+            if (file.size > 10 * 1024 * 1024) {
+                alert("Please choose an image or GIF smaller than 10 MB.");
+                event.target.value = "";
+                return;
+            }
+            try {
+                await setProfileAvatarBlob(file);
+            } catch (error) {
+                console.error("Profile upload error:", error);
+                alert("The profile image could not be saved. Please try a smaller image or GIF.");
+            } finally {
+                event.target.value = "";
+            }
+        }
+
+        async function setProfileAvatarBlob(blob) {
+            if (!currentUser || !blob) return;
+            const data = getAppData();
+            if (!data.profiles) data.profiles = {};
+            const oldId = data.profiles[currentUser]?.avatarId || "";
+            const avatarId = await saveProfileAvatarBlob(blob);
+            data.profiles[currentUser] = { ...(data.profiles[currentUser] || {}), avatar: "", avatarId, avatarType: blob.type || "image/jpeg" };
+            saveAppData(data);
+            if (oldId && oldId !== avatarId) await deleteProfileAvatarBlob(oldId);
+            const url = URL.createObjectURL(blob);
+            profileAvatarUrlCache.set(avatarId, url);
+            const preview = document.getElementById("profile-avatar-preview");
+            preview.className = "profile-avatar-preview";
+            preview.innerHTML = `<img src="${escapeHtml(url)}" alt="Profile avatar" class="w-full h-full object-cover">`;
+            await refreshCurrentUserDisplay();
+            if (chatChannel) chatChannel.postMessage({ type: "profile_updated", username: currentUser });
+            renderCurrentRoomMessages();
+        }
+
+        async function removeProfileAvatar() {
+            if (!currentUser) return;
+            const data = getAppData();
+            if (!data.profiles) data.profiles = {};
+            const oldId = data.profiles[currentUser]?.avatarId || "";
+            data.profiles[currentUser] = { ...(data.profiles[currentUser] || {}), avatar: "", avatarId: "", avatarType: "" };
+            saveAppData(data);
+            await deleteProfileAvatarBlob(oldId);
+            await openProfileModal();
+            await refreshCurrentUserDisplay();
+            renderCurrentRoomMessages();
+            if (chatChannel) chatChannel.postMessage({ type: "profile_updated", username: currentUser });
+        }
+
+        async function takeProfilePhoto() {
+            if (!navigator.mediaDevices?.getUserMedia) { alert("Camera access is not supported by this browser."); return; }
+            let stream = null;
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 640, max: 1280 }, height: { ideal: 640, max: 1280 } }, audio: false });
+                const video = document.createElement("video");
+                video.autoplay = true; video.playsInline = true; video.muted = true; video.srcObject = stream;
+                await new Promise((resolve, reject) => {
+                    const timeout = setTimeout(() => reject(new Error("Camera did not start.")), 5000);
+                    video.onloadedmetadata = () => { clearTimeout(timeout); resolve(); };
+                    video.onerror = () => { clearTimeout(timeout); reject(new Error("Camera video failed.")); };
+                });
+                await video.play().catch(() => {});
+                await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+                const width = video.videoWidth || 640;
+                const height = video.videoHeight || 640;
+                const maxSide = 512;
+                const scale = Math.min(1, maxSide / Math.max(width, height));
+                const canvas = document.createElement("canvas");
+                canvas.width = Math.max(1, Math.round(width * scale));
+                canvas.height = Math.max(1, Math.round(height * scale));
+                const ctx = canvas.getContext("2d", { alpha: false });
+                if (!ctx || !video.videoWidth || !video.videoHeight) throw new Error("Camera frame is not ready.");
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const blob = await new Promise((resolve, reject) => canvas.toBlob(b => b ? resolve(b) : reject(new Error("Could not create photo.")), "image/jpeg", 0.82));
+                await setProfileAvatarBlob(blob);
+            } catch (error) {
+                console.error("Profile camera error:", error);
+                alert("Could not take the profile photo. Please allow camera access and try again.");
+            } finally {
+                if (stream) stream.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        function saveProfileChanges() {
+            if (!currentUser) return;
+            const currentPass = document.getElementById("profile-current-password").value;
+            const newPass = document.getElementById("profile-new-password").value;
+            const confirmPass = document.getElementById("profile-confirm-password").value;
+            const errorEl = document.getElementById("profile-password-error");
+            errorEl.classList.add("hidden");
+            if (currentPass || newPass || confirmPass) {
+                const data = getAppData();
+                if (data.users[currentUser] !== currentPass) { errorEl.innerText = "Current password is incorrect."; errorEl.classList.remove("hidden"); return; }
+                if (newPass.length < 6) { errorEl.innerText = "New password must be at least 6 characters long."; errorEl.classList.remove("hidden"); return; }
+                if (newPass !== confirmPass) { errorEl.innerText = "New passwords do not match."; errorEl.classList.remove("hidden"); return; }
+                data.users[currentUser] = newPass;
+                saveAppData(data);
+            }
+            refreshCurrentUserDisplay();
+            closeProfileModal();
+            alert("Profile changes saved successfully.");
+            if (chatChannel) chatChannel.postMessage({ type: "profile_updated", username: currentUser });
+            renderCurrentRoomMessages();
+        }
+
+        function renderCurrentRoomMessages() {
+            const chatMessages = document.getElementById("chat-messages");
+            if (!chatMessages || !currentRoom) return;
+            chatMessages.innerHTML = "";
+            const data = getAppData();
+            (data.messages || []).filter(m => m.room === currentRoom).forEach(m => displayMessage({ user_name:m.username, text:m.text, isImage:m.isImage, isAudio:m.isAudio, audioType:m.audioType, isVideo:m.isVideo, videoType:m.videoType, mediaId:m.mediaId, segmentIds:Array.isArray(m.segmentIds) ? m.segmentIds : [], isGif:m.isGif, gifId:m.gifId, gifType:m.gifType, gifName:m.gifName, gifUrl:m.gifUrl, gifPreviewUrl:m.gifPreviewUrl, gifProvider:m.gifProvider, gifAnalytics:m.gifAnalytics, timestamp:m.timestamp }));
+        }
+
+        function proceedToRoomSelection(username) {
+            currentUser = username;
+            document.getElementById('auth-modal').classList.add('hidden');
+            document.getElementById('room-modal').classList.remove('hidden');
+            document.getElementById('room-name-input').focus();
+        }
+        function exitWebsite() {
+            document.body.classList.remove('logged-in');
+            currentUser = "";
+            location.reload();
+        }
+        function joinRoom() {
+            const roomInput = document.getElementById('room-name-input').value.trim().toLowerCase();
+            const roomErr = document.getElementById('room-error');
+            roomErr.classList.add('hidden');
+            if(!roomInput) {
+                roomErr.innerText = "Room name cannot be blank!";
+                roomErr.classList.remove('hidden');
+                return;
+            }
+            const appData = getAppData();
+            const roomBans = Array.isArray(appData.bannedUsers[roomInput]) ? appData.bannedUsers[roomInput] : [];
+            if (roomBans.includes(currentUser)) {
+                roomErr.innerText = "You are banned from this chat room.";
+                roomErr.classList.remove('hidden');
+                return;
+            }
+            currentRoom = roomInput;
+            document.body.classList.add('logged-in');
+            document.body.classList.add('in-chat');
+            document.getElementById('room-modal').classList.add('hidden');
+            const adminKey = `sy_room_admin_${currentRoom}`;
+            let existingAdmin = localStorage.getItem(adminKey);
+            if (!existingAdmin) {
+                localStorage.setItem(adminKey, currentUser);
+            }
+            isAdmin = localStorage.getItem(adminKey) === currentUser;
+            refreshCurrentUserDisplay();
+            document.getElementById('current-room-display').innerText = `💬 #${currentRoom}`;
+            document.getElementById('header-title').innerText = `SY Chat Web: #${currentRoom}`;
+            if (isAdmin) {
+                document.getElementById('admin-menu-option').classList.remove('hidden');
+                document.getElementById('admin-menu-option').classList.add('flex');
+            } else {
+                document.getElementById('admin-menu-option').classList.add('hidden');
+                document.getElementById('admin-menu-option').classList.remove('flex');
+            }
+            chatChannel = new BroadcastChannel(`sy_web_room_${currentRoom}`);
+            chatChannel.onmessage = function (event) {
+                if (event.data.type === 'new_report') {
+                    if (isAdmin) {
+                        const appData = getAppData();
+                        if (!appData.reports.some(r => r.id === event.data.report.id)) {
+                            appData.reports.push(event.data.report);
+                            saveAppData(appData);
+                        }
+                    }
+                } else if (event.data.type === 'user_banned') {
+                    if (event.data.targetUser === currentUser) {
+                        alert(event.data.text || `You have been banned from #${currentRoom}.`);
+                        forceLeaveRoom();
+                    }
+                } else if (event.data.type === 'room_deleted') {
+                    alert(event.data.text || `#${currentRoom} was deleted by the room admin.`);
+                    forceLeaveRoom();
+                } else if (event.data.type === 'notification') {
+                    if (event.data.targetUser === currentUser) {
+                        addUserNotification(event.data.text);
+                    }
+                } else if (event.data.type === 'profile_updated') {
+                    renderCurrentRoomMessages();
+                    refreshCurrentUserDisplay();
+                } else {
+                    displayMessage(event.data);
+                }
+            };
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML = '';
+            const data = getAppData();
+            if (Array.isArray(data.messages)) {
+                data.messages.filter(m => m.room === currentRoom).forEach(m => {
+                    displayMessage({
+                        user_name: m.username,
+                        text: m.text,
+                        isImage: m.isImage,
+                        isAudio: m.isAudio,
+                        audioType: m.audioType,
+                        isVideo: m.isVideo,
+                        videoType: m.videoType,
+                        mediaId: m.mediaId,
+                        segmentIds: Array.isArray(m.segmentIds) ? m.segmentIds : [],
+                        isGif: m.isGif,
+                        gifId: m.gifId,
+                        gifType: m.gifType,
+                        gifName: m.gifName,
+                        gifUrl: m.gifUrl,
+                        gifPreviewUrl: m.gifPreviewUrl,
+                        gifProvider: m.gifProvider,
+                        gifAnalytics: m.gifAnalytics
+                    });
+                });
+            }
+            const welcomeMsg = { user_name: "System", text: `${currentUser} has joined #${currentRoom}` };
+            displayMessage(welcomeMsg);
+            saveMessageToStorage("System", `${currentUser} has joined #${currentRoom}`, false);
+        }
+        function startHoverTimer() {
+            if (leaveCloseTimer) {
+                clearTimeout(leaveCloseTimer);
+                leaveCloseTimer = null;
+            }
+            const menu = document.getElementById('dropdown-menu');
+            menu.classList.remove('hidden');
+            menu.classList.add('flex');
+        }
+        function startLeaveTimer() {
+            if (leaveCloseTimer) {
+                clearTimeout(leaveCloseTimer);
+            }
+            leaveCloseTimer = setTimeout(() => {
+                const menu = document.getElementById('dropdown-menu');
+                menu.classList.remove('flex');
+                menu.classList.add('hidden');
+                leaveCloseTimer = null;
+            }, 2000);
+        }
+        function saveMessageToStorage(username, text, isImage = false, isAudio = false, audioType = "", isVideo = false, videoType = "", mediaId = "", segmentIds = [], isGif = false, gifId = "", gifType = "", gifName = "", gifUrl = "", gifPreviewUrl = "", gifProvider = "", gifAnalytics = null) {
+            const data = getAppData();
+            data.messages.push({
+                room: currentRoom,
+                username: username,
+                text: text,
+                isImage: isImage,
+                isAudio: isAudio,
+                audioType: audioType,
+                isVideo: isVideo,
+                videoType: videoType,
+                mediaId: mediaId || "",
+                segmentIds: Array.isArray(segmentIds) ? segmentIds.slice() : [],
+                isGif: !!isGif,
+                gifId: gifId || "",
+                gifType: gifType || "",
+                gifName: gifName || "",
+                gifUrl: gifUrl || "",
+                gifPreviewUrl: gifPreviewUrl || "",
+                gifProvider: gifProvider || "",
+                gifAnalytics: gifAnalytics || null,
+                timestamp: Date.now()
+            });
+            saveAppData(data);
+        }
+
+        async function saveVideoMessage(username, blob, videoType) {
+            try {
+                const mediaId = await saveVideoBlob(blob);
+                const msg = {
+                    user_name: username,
+                    text: "",
+                    isVideo: true,
+                    videoType: videoType || blob.type || "video/webm",
+                    mediaId: mediaId
+                };
+                if (chatChannel) chatChannel.postMessage(msg);
+                displayMessage(msg);
+                saveMessageToStorage(username, "", false, false, "", true, msg.videoType, mediaId);
+                return true;
+            } catch (error) {
+                console.error("Video save failed:", error);
+                alert("The video could not be saved. Please try a shorter video.");
+                return false;
+            }
+        }
+        async function saveSegmentedVideoMessage(username, segmentIds, videoType, durationMs) {
+            if (!Array.isArray(segmentIds) || !segmentIds.length) return false;
+            const msg = {
+                user_name: username,
+                text: "",
+                isVideo: true,
+                videoType: videoType || "video/webm",
+                segmentIds: segmentIds.slice(),
+                durationMs: Math.max(0, Number(durationMs) || 0)
+            };
+            if (chatChannel) chatChannel.postMessage(msg);
+            displayMessage(msg);
+            saveMessageToStorage(username, "", false, false, "", true, msg.videoType, "", msg.segmentIds);
+            return true;
+        }
+
+        function forceLeaveRoom() {
+            closeCameraModal();
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+            }
+            if (recordingTimerInterval) {
+                clearInterval(recordingTimerInterval);
+                recordingTimerInterval = null;
+            }
+            mediaRecorder = null;
+            recordedAudioChunks = [];
+            const recordStatus = document.getElementById("recording-status");
+            const recordBtn = document.getElementById("record-btn");
+            if (recordStatus) recordStatus.classList.add("hidden");
+            if (recordBtn) {
+                recordBtn.classList.remove("bg-red-700", "recording-pulse");
+                recordBtn.title = "Record voice message";
+            }
+            if (chatChannel) {
+                chatChannel.close();
+                chatChannel = null;
+            }
+            currentRoom = "";
+            document.body.classList.remove('in-chat');
+            document.body.classList.remove('logged-in');
+            isAdmin = false;
+            document.getElementById('chat-messages').innerHTML = '';
+            document.getElementById('room-name-input').value = '';
+            document.getElementById('header-title').innerText = `SY Chat Web`;
+            document.getElementById('current-room-display').innerText = '';
+            document.getElementById('room-modal').classList.remove('hidden');
+            document.getElementById('room-name-input').focus();
+        }
+        function leaveRoom() {
+            if (!currentRoom || !chatChannel) return;
+            const leaveText = `${currentUser} has left #${currentRoom}`;
+            chatChannel.postMessage({ user_name: "System", text: leaveText });
+            saveMessageToStorage("System", leaveText, false);
+            forceLeaveRoom();
+        }
+        function hideUploadMenu() {
+            const menu = document.getElementById("upload-menu");
+            if (menu) menu.classList.remove("visible");
+            const button = document.getElementById("upload-btn");
+            if (button) button.setAttribute("aria-expanded", "false");
+        }
+        function toggleUploadMenu(event) {
+            if (event) event.stopPropagation();
+            const menu = document.getElementById("upload-menu");
+            const button = document.getElementById("upload-btn");
+            if (!menu) return;
+            const isVisible = menu.classList.toggle("visible");
+            if (button) button.setAttribute("aria-expanded", String(isVisible));
+        }
+        document.addEventListener("click", function(event) {
+            const wrapper = document.getElementById("upload-wrapper");
+            if (wrapper && !wrapper.contains(event.target)) hideUploadMenu();
+        });
+        function openImagePicker() {
+            const input = document.getElementById("upload-input");
+            if (input) {
+                input.accept = "image/*";
+                input.value = "";
+                input.click();
+            }
+            hideUploadMenu();
+        }
+        function openVideoPicker() {
+            const input = document.getElementById("upload-input");
+            if (input) {
+                input.accept = "video/*";
+                input.value = "";
+                input.click();
+            }
+            hideUploadMenu();
+        }
+        function handleUpload(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            if (file.type.startsWith("image/")) {
+                handleImageUpload(event);
+            } else if (file.type.startsWith("video/")) {
+                handleVideoUpload(event);
+            } else {
+                alert("Please select an image or video file.");
+                event.target.value = "";
+            }
+        }
+        async function openCameraModal() {
+            if (!currentUser || !chatChannel) {
+                alert("Join a chat room before using the camera.");
+                return;
+            }
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert("Camera access is not supported by this browser.");
+                return;
+            }
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 1280, max: 1280 }, height: { ideal: 720, max: 720 }, frameRate: { ideal: 24, max: 30 } }, audio: true });
+                const preview = document.getElementById("camera-preview");
+                preview.srcObject = cameraStream;
+                const actionBtn = document.getElementById("camera-action-btn");
+                if (actionBtn) {
+                    actionBtn.disabled = false;
+                    actionBtn.innerText = "Take Photo";
+                }
+                cameraFinalizing = false;
+                cameraRecordingActive = false;
+                cameraStopRequested = false;
+                cameraChunks = [];
+                cameraSegmentIds = [];
+                cameraSegmentNumber = 0;
+                cameraSegmentMimeType = "";
+                document.getElementById("camera-modal").classList.remove("hidden");
+                setCameraMode("photo");
+            } catch (error) {
+                console.error("Camera access error:", error);
+                alert("Camera access was denied or is unavailable. Please allow camera access and try again.");
+            }
+        }
+        function setCameraMode(mode) {
+            cameraMode = mode;
+            const photoBtn = document.getElementById("camera-photo-btn");
+            const videoBtn = document.getElementById("camera-video-btn");
+            const actionBtn = document.getElementById("camera-action-btn");
+            if (mode === "photo") {
+                photoBtn.classList.remove("bg-slate-700");
+                photoBtn.classList.add("bg-indigo-600");
+                videoBtn.classList.remove("bg-indigo-600");
+                videoBtn.classList.add("bg-slate-700");
+                actionBtn.innerText = "Take Photo";
+            } else {
+                videoBtn.classList.remove("bg-slate-700");
+                videoBtn.classList.add("bg-indigo-600");
+                photoBtn.classList.remove("bg-indigo-600");
+                photoBtn.classList.add("bg-slate-700");
+                actionBtn.innerText = cameraRecorder && cameraRecorder.state === "recording" ? "Stop Recording" : "Start Recording";
+            }
+        }
+        function cameraAction() {
+            if (cameraMode === "photo") captureCameraPhoto();
+            else toggleCameraRecording();
+        }
+        function captureCameraPhoto() {
+            const video = document.getElementById("camera-preview");
+            const canvas = document.getElementById("camera-canvas");
+            if (!video.videoWidth || !video.videoHeight) return;
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageDataUrl = canvas.toDataURL("image/jpeg", 0.9);
+            const msg = { user_name: currentUser, text: imageDataUrl, isImage: true };
+            chatChannel.postMessage(msg);
+            displayMessage(msg);
+            saveMessageToStorage(currentUser, imageDataUrl, true);
+            closeCameraModal();
+        }
+        function getBestCameraVideoMimeType() {
+            if (!window.MediaRecorder) return "";
+            // Prefer browser-native formats. No FFmpeg conversion is required;
+            // each long recording segment is stored directly in IndexedDB.
+            const candidates = [
+                "video/webm;codecs=vp8",
+                "video/webm",
+                "video/mp4;codecs=avc1",
+                "video/mp4"
+            ];
+            for (const type of candidates) {
+                try {
+                    if (MediaRecorder.isTypeSupported(type)) return type;
+                } catch (_) {}
+            }
+            return "";
+        }
+        function getCameraRecorderStream() {
+            // Keep the original camera stream so microphone audio is recorded too.
+            // We do not clone the tracks, which avoids an extra temporary stream.
+            return cameraStream || null;
+        }
+        function verifyVideoBlobPlayable(blob) {
+            return new Promise(resolve => {
+                const url = URL.createObjectURL(blob);
+                const video = document.createElement("video");
+                let done = false;
+                const finish = ok => {
+                    if (done) return;
+                    done = true;
+                    URL.revokeObjectURL(url);
+                    video.removeAttribute("src");
+                    video.load();
+                    resolve(ok);
+                };
+                video.muted = true;
+                video.preload = "metadata";
+                video.onloadedmetadata = () => finish(true);
+                video.onerror = () => finish(false);
+                video.src = url;
+                video.load();
+                setTimeout(() => finish(false), 3000);
+            });
+        }
+        function isVideoTypePlayable(type) {
+            if (!type) return true;
+            const video = document.createElement("video");
+            const result = video.canPlayType(type);
+            return result === "probably" || result === "maybe";
+        }
+        function resetCameraSegmentState() {
+            if (cameraSegmentTimer) {
+                clearTimeout(cameraSegmentTimer);
+                cameraSegmentTimer = null;
+            }
+            cameraChunks = [];
+            cameraSegmentIds = [];
+            cameraSegmentNumber = 0;
+            cameraStopRequested = false;
+            cameraFinalizing = false;
+            cameraRecordingActive = false;
+            cameraSegmentMimeType = "";
+        }
+
+        function scheduleNextCameraSegment() {
+            if (cameraStopRequested || cameraFinalizing) return;
+            if (cameraSegmentTimer) clearTimeout(cameraSegmentTimer);
+            cameraSegmentTimer = setTimeout(() => {
+                cameraSegmentTimer = null;
+                if (cameraRecorder && cameraRecorder.state === "recording") {
+                    cameraRecorder.stop();
+                }
+            }, CAMERA_SEGMENT_MS);
+        }
+
+        function startCameraSegment() {
+            if (cameraStopRequested || cameraFinalizing || !cameraStream) return;
+            const mimeType = cameraSegmentMimeType || getBestCameraVideoMimeType();
+            if (!mimeType) throw new Error("This browser does not support a camera video format.");
+            cameraSegmentMimeType = mimeType;
+            cameraChunks = [];
+            cameraSegmentNumber += 1;
+            cameraRecorder = new MediaRecorder(cameraStream, {
+                mimeType,
+                videoBitsPerSecond: 1200000,
+                audioBitsPerSecond: 64000
+            });
+            cameraRecorder.ondataavailable = event => {
+                if (event.data && event.data.size > 0) cameraChunks.push(event.data);
+            };
+            cameraRecorder.onerror = event => {
+                console.error("Camera segment error:", event.error || event);
+                cameraStopRequested = true;
+                if (cameraRecorder && cameraRecorder.state !== "inactive") {
+                    try { cameraRecorder.stop(); } catch (_) {}
+                }
+            };
+            cameraRecorder.onstop = finishCameraSegment;
+            // 1-second chunks prevent a segment from becoming one giant event.
+            // The segment itself is only 30 seconds and is saved immediately.
+            cameraRecorder.start(1000);
+            scheduleNextCameraSegment();
+        }
+
+        function toggleCameraRecording() {
+            if (cameraRecordingActive) {
+                cameraStopRequested = true;
+                if (cameraSegmentTimer) {
+                    clearTimeout(cameraSegmentTimer);
+                    cameraSegmentTimer = null;
+                }
+                cameraRecorder.stop();
+                return;
+            }
+            if (!cameraStream || !window.MediaRecorder) {
+                alert("Video recording is not supported by this browser.");
+                return;
+            }
+            if (cameraFinalizing) return;
+            resetCameraSegmentState();
+            cameraRecordingStartedAt = Date.now();
+            cameraRecordingActive = true;
+            try {
+                startCameraSegment();
+            } catch (error) {
+                console.error("MediaRecorder error:", error);
+                alert("Video recording could not be started in a supported format.");
+                resetCameraSegmentState();
+                return;
+            }
+            updateCameraRecordingTimer();
+            cameraRecordingTimer = setInterval(updateCameraRecordingTimer, 1000);
+            document.getElementById("camera-recording-status").classList.remove("hidden");
+            document.getElementById("camera-action-btn").innerText = "Stop Recording";
+        }
+
+        function updateCameraRecordingTimer() {
+            const elapsed = Math.floor((Date.now() - cameraRecordingStartedAt) / 1000);
+            const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
+            const seconds = String(elapsed % 60).padStart(2, "0");
+            const timer = document.getElementById("camera-recording-timer");
+            if (timer) timer.innerText = `${minutes}:${seconds}`;
+        }
+
+        async function finishCameraSegment() {
+            if (cameraSegmentTimer) {
+                clearTimeout(cameraSegmentTimer);
+                cameraSegmentTimer = null;
+            }
+            const chunks = cameraChunks;
+            cameraChunks = [];
+            const recorder = cameraRecorder;
+            cameraRecorder = null;
+            const segmentNumber = cameraSegmentNumber;
+            const sourceType = (recorder && recorder.mimeType) || cameraSegmentMimeType || chunks[0]?.type || "video/webm";
+
+            if (!chunks.length) {
+                if (!cameraStopRequested) {
+                    try { startCameraSegment(); } catch (error) {
+                        console.error("Next camera segment failed:", error);
+                        cameraStopRequested = true;
+                    }
+                }
+                if (cameraStopRequested) await finishSegmentedCameraRecording();
+                return;
+            }
+
+            const segmentBlob = new Blob(chunks, { type: sourceType });
+            // Drop the array reference immediately after making the short segment.
+            chunks.length = 0;
+
+            try {
+                const segmentId = await saveVideoBlob(segmentBlob);
+                cameraSegmentIds.push(segmentId);
+                console.log(`Saved camera segment ${segmentNumber}:`, Math.round(segmentBlob.size / 1024), "KB");
+            } catch (error) {
+                console.error("Camera segment save failed:", error);
+                cameraStopRequested = true;
+                alert("A video segment could not be saved. The recording has been stopped.");
+            }
+
+            if (!cameraStopRequested && !cameraFinalizing) {
+                try {
+                    startCameraSegment();
+                    return;
+                } catch (error) {
+                    console.error("Next camera segment failed:", error);
+                    cameraStopRequested = true;
+                }
+            }
+            await finishSegmentedCameraRecording();
+        }
+
+        async function finishSegmentedCameraRecording() {
+            if (cameraFinalizing) return;
+            cameraFinalizing = true;
+            cameraRecordingActive = false;
+            if (cameraRecordingTimer) {
+                clearInterval(cameraRecordingTimer);
+                cameraRecordingTimer = null;
+            }
+            if (cameraSegmentTimer) {
+                clearTimeout(cameraSegmentTimer);
+                cameraSegmentTimer = null;
+            }
+            const status = document.getElementById("camera-recording-status");
+            if (status) status.classList.add("hidden");
+            const actionBtn = document.getElementById("camera-action-btn");
+            if (actionBtn) {
+                actionBtn.disabled = true;
+                actionBtn.innerText = "Saving video…";
+            }
+            const ids = cameraSegmentIds.slice();
+            const durationMs = Date.now() - cameraRecordingStartedAt;
+            try {
+                if (ids.length) {
+                    await saveSegmentedVideoMessage(currentUser, ids, cameraSegmentMimeType || "video/webm", durationMs);
+                }
+            } catch (error) {
+                console.error("Segmented camera video save failed:", error);
+                alert("The video could not be saved. Please try again.");
+            } finally {
+                cameraSegmentIds = [];
+                cameraChunks = [];
+                cameraRecorder = null;
+                cameraFinalizing = false;
+                cameraRecordingActive = false;
+                cameraStopRequested = false;
+                closeCameraModal();
+            }
+        }
+
+        function closeCameraModal() {
+            if (cameraRecorder && cameraRecorder.state === "recording") {
+                cameraStopRequested = true;
+                try { cameraRecorder.stop(); } catch (_) {}
+                return;
+            }
+            if (cameraRecordingTimer) {
+                clearInterval(cameraRecordingTimer);
+                cameraRecordingTimer = null;
+            }
+            if (cameraSegmentTimer) {
+                clearTimeout(cameraSegmentTimer);
+                cameraSegmentTimer = null;
+            }
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            const preview = document.getElementById("camera-preview");
+            if (preview) preview.srcObject = null;
+            const status = document.getElementById("camera-recording-status");
+            if (status) status.classList.add("hidden");
+            document.getElementById("camera-modal").classList.add("hidden");
+            cameraRecorder = null;
+            cameraChunks = [];
+            cameraSegmentIds = [];
+            const actionBtn = document.getElementById("camera-action-btn");
+            if (actionBtn) actionBtn.disabled = false;
+            cameraSegmentNumber = 0;
+            cameraStopRequested = false;
+            cameraRecordingActive = false;
+            cameraSegmentMimeType = "";
+        }
+        async function toggleRecorder() {
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                stopRecorder();
+                return;
+            }
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+                alert("Voice recording is not supported by this browser. Please use a recent Chrome, Edge, Firefox, or Safari browser.");
+                return;
+            }
+            if (!currentUser || !chatChannel) {
+                alert("Join a chat room before recording a voice message.");
+                return;
+            }
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const mimeCandidates = [
+                    "audio/webm;codecs=opus",
+                    "audio/webm",
+                    "audio/ogg;codecs=opus",
+                    "audio/mp4"
+                ];
+                const mimeType = mimeCandidates.find(type => MediaRecorder.isTypeSupported(type)) || "";
+                mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+                recordedAudioChunks = [];
+                mediaRecorder.ondataavailable = event => {
+                    if (event.data && event.data.size > 0) {
+                        recordedAudioChunks.push(event.data);
+                    }
+                };
+                mediaRecorder.onstop = () => {
+                    stream.getTracks().forEach(track => track.stop());
+                    finishRecorder();
+                };
+                mediaRecorder.start();
+                recordingStartedAt = Date.now();
+                updateRecordingTimer();
+                recordingTimerInterval = setInterval(updateRecordingTimer, 1000);
+                const btn = document.getElementById("record-btn");
+                const status = document.getElementById("recording-status");
+                btn.classList.add("bg-red-700", "recording-pulse");
+                btn.title = "Stop recording";
+                status.classList.remove("hidden");
+            } catch (error) {
+                console.error("Microphone access error:", error);
+                alert("Microphone access was denied or is unavailable. Please allow microphone access and try again.");
+            }
+        }
+        function stopRecorder() {
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+            }
+        }
+        function updateRecordingTimer() {
+            const elapsed = Math.floor((Date.now() - recordingStartedAt) / 1000);
+            const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
+            const seconds = String(elapsed % 60).padStart(2, "0");
+            const timer = document.getElementById("recording-timer");
+            if (timer) timer.textContent = `${minutes}:${seconds}`;
+        }
+        function finishRecorder() {
+            if (recordingTimerInterval) {
+                clearInterval(recordingTimerInterval);
+                recordingTimerInterval = null;
+            }
+            const btn = document.getElementById("record-btn");
+            const status = document.getElementById("recording-status");
+            btn.classList.remove("bg-red-700", "recording-pulse");
+            btn.title = "Record voice message";
+            status.classList.add("hidden");
+            if (!recordedAudioChunks.length || !currentUser || !chatChannel) {
+                mediaRecorder = null;
+                recordedAudioChunks = [];
+                return;
+            }
+            const mimeType = recordedAudioChunks[0].type || "audio/webm";
+            const blob = new Blob(recordedAudioChunks, { type: mimeType });
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const audioDataUrl = e.target.result;
+                const msg = {
+                    user_name: currentUser,
+                    text: audioDataUrl,
+                    isAudio: true,
+                    audioType: mimeType
+                };
+                chatChannel.postMessage(msg);
+                displayMessage(msg);
+                saveMessageToStorage(currentUser, audioDataUrl, false, true, mimeType);
+                mediaRecorder = null;
+                recordedAudioChunks = [];
+            };
+            reader.readAsDataURL(blob);
+        }
+        function submitMessage() {
+            const input = document.getElementById('message-input');
+            const text = input.value.trim();
+            if(!text || !currentUser || !chatChannel) return;
+            const msg = { user_name: currentUser, text: text, isImage: false };
+            chatChannel.postMessage(msg);
+            displayMessage(msg);
+            saveMessageToStorage(currentUser, text, false);
+            input.value = "";
+            input.focus();
+        }
+        function handleVideoUpload(event) {
+            const file = event.target.files[0];
+            if (!file || !currentUser || !chatChannel) return;
+            if (!file.type.startsWith("video/")) {
+                alert("Please select a video file.");
+                event.target.value = "";
+                return;
+            }
+            if (!isVideoTypePlayable(file.type)) {
+                alert(`This browser cannot play ${file.type}. Please choose an MP4 (H.264/AAC) or WebM (VP8/VP9 + Opus) video.`);
+                event.target.value = "";
+                return;
+            }
+            const blob = file.slice(0, file.size, file.type);
+            saveVideoMessage(currentUser, blob, file.type);
+            event.target.value = "";
+        }
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file || !currentUser || !chatChannel) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageDataUrl = e.target.result;
+                const msg = { user_name: currentUser, text: imageDataUrl, isImage: true };
+                chatChannel.postMessage(msg);
+                displayMessage(msg);
+                saveMessageToStorage(currentUser, imageDataUrl, true);
+                event.target.value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+        function openReportModal(username, text) {
+            document.getElementById('report-reason-input').value = '';
+            document.getElementById('report-modal').classList.remove('hidden');
+            window.currentReportData = { reported_user: username, message_text: text };
+        }
+        function closeReportModal() {
+            document.getElementById('report-modal').classList.add('hidden');
+            window.currentReportData = null;
+        }
+        function submitReport() {
+            const reason = document.getElementById('report-reason-input').value.trim();
+            if (!reason) {
+                alert("Please provide a reason for the report.");
+                return;
+            }
+            const data = window.currentReportData;
+            const appData = getAppData();
+            const newReport = {
+                id: Date.now(),
+                room: currentRoom,
+                reporter: currentUser,
+                reported_user: data.reported_user,
+                message_text: data.message_text,
+                reason: reason
+            };
+            appData.reports.push(newReport);
+            saveAppData(appData);
+            if (chatChannel) {
+                chatChannel.postMessage({ type: 'new_report', report: newReport });
+            }
+            alert("Report sent successfully.");
+            closeReportModal();
+        }
+        function getRoomBans(room = currentRoom) {
+            const data = getAppData();
+            if (!data.bannedUsers) data.bannedUsers = {};
+            if (!Array.isArray(data.bannedUsers[room])) data.bannedUsers[room] = [];
+            return data.bannedUsers[room];
+        }
+        function getRoomUsers(room = currentRoom) {
+            const data = getAppData();
+            const users = new Set();
+            (data.messages || []).filter(m => m.room === room && m.username && m.username !== "System")
+                .forEach(m => users.add(m.username));
+            if (currentUser) users.add(currentUser);
+            return Array.from(users).sort((a, b) => a.localeCompare(b));
+        }
+        function renderAdminMembers() {
+            const listEl = document.getElementById('admin-members-list');
+            const roomNameEl = document.getElementById('admin-room-name');
+            if (!listEl) return;
+            roomNameEl.innerText = `#${currentRoom}`;
+            const bans = getRoomBans();
+            const users = getRoomUsers().filter(user => user !== currentUser);
+            if (users.length === 0) {
+                listEl.innerHTML = `<p class="text-xs text-slate-400 italic">No other users to manage.</p>`;
+                return;
+            }
+            listEl.innerHTML = '';
+            users.forEach(user => {
+                const banned = bans.includes(user);
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between bg-slate-900 border border-slate-700 rounded-lg p-2.5";
+                item.innerHTML = `
+                    <span class="text-xs text-slate-200">👤 ${escapeHtml(user)}</span>
+                    <button onclick="${banned ? `unbanUser('${escapeHtml(user).replace(/'/g, "\\'")}')` : `banUser('${escapeHtml(user).replace(/'/g, "\\'")}')`}"
+                        class="${banned ? 'bg-emerald-700 hover:bg-emerald-600' : 'bg-red-700 hover:bg-red-600'} text-white text-xs px-2.5 py-1 rounded transition">
+                        ${banned ? 'Unban' : 'Ban'}
+                    </button>
+                `;
+                listEl.appendChild(item);
+            });
+        }
+        function banUser(username) {
+            if (!isAdmin || !currentRoom || username === currentUser) return;
+            if (!confirm(`Ban ${username} from #${currentRoom}?`)) return;
+            const data = getAppData();
+            if (!data.bannedUsers) data.bannedUsers = {};
+            if (!Array.isArray(data.bannedUsers[currentRoom])) data.bannedUsers[currentRoom] = [];
+            if (!data.bannedUsers[currentRoom].includes(username)) {
+                data.bannedUsers[currentRoom].push(username);
+            }
+            saveAppData(data);
+            if (chatChannel) {
+                chatChannel.postMessage({
+                    type: 'user_banned',
+                    targetUser: username,
+                    text: `You have been banned from #${currentRoom} by the room admin.`
+                });
+            }
+            renderAdminMembers();
+            alert(`${username} has been banned from #${currentRoom}.`);
+        }
+        function unbanUser(username) {
+            if (!isAdmin || !currentRoom) return;
+            const data = getAppData();
+            const bans = Array.isArray(data.bannedUsers?.[currentRoom]) ? data.bannedUsers[currentRoom] : [];
+            data.bannedUsers[currentRoom] = bans.filter(user => user !== username);
+            saveAppData(data);
+            renderAdminMembers();
+            alert(`${username} has been unbanned from #${currentRoom}.`);
+        }
+        function deleteCurrentRoom() {
+            if (!isAdmin || !currentRoom) return;
+            const roomToDelete = currentRoom;
+            if (!confirm(`Delete #${roomToDelete} permanently? This will remove its messages, reports, bans, and room admin. This cannot be undone.`)) return;
+            const data = getAppData();
+            data.messages = (data.messages || []).filter(m => m.room !== roomToDelete);
+            data.reports = (data.reports || []).filter(r => r.room !== roomToDelete);
+            if (data.bannedUsers) delete data.bannedUsers[roomToDelete];
+            saveAppData(data);
+            localStorage.removeItem(`sy_room_admin_${roomToDelete}`);
+            if (chatChannel) {
+                chatChannel.postMessage({
+                    type: 'room_deleted',
+                    text: `#${roomToDelete} was deleted by the room admin.`
+                });
+            }
+            alert(`#${roomToDelete} has been deleted.`);
+            forceLeaveRoom();
+        }
+        function openAdminModal() {
+            const appData = getAppData();
+            const listEl = document.getElementById('admin-reports-list');
+            listEl.innerHTML = '';
+            const roomReports = appData.reports.filter(r => r.room === currentRoom);
+            if (roomReports.length === 0) {
+                listEl.innerHTML = `<p class="text-xs text-slate-400 italic">No reports submitted for this room.</p>`;
+            } else {
+                roomReports.forEach(rep => {
+                    const item = document.createElement('div');
+                    item.className = "bg-slate-900 border border-slate-700 rounded-lg p-3 space-y-2";
+                    item.innerHTML = `
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-red-400 font-bold">Reported: ${escapeHtml(rep.reported_user)}</span>
+                            <span class="text-slate-400">By: ${escapeHtml(rep.reporter)}</span>
+                        </div>
+                        <p class="text-xs text-slate-300"><strong>Reason:</strong> ${escapeHtml(rep.reason)}</p>
+                        <p class="text-xs text-slate-400 italic bg-slate-800 p-1.5 rounded">Msg: "${escapeHtml(rep.message_text)}"</p>
+                        <div class="flex justify-end gap-2 pt-1">
+                            <button onclick="dismissReport(${rep.id})" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs px-2.5 py-1 rounded transition">Dismiss</button>
+                        </div>
+                    `;
+                    listEl.appendChild(item);
+                });
+            }
+            renderAdminMembers();
+            document.getElementById('admin-modal').classList.remove('hidden');
+        }
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+        function dismissReport(reportId) {
+            const appData = getAppData();
+            const reportIndex = appData.reports.findIndex(r => r.id === reportId);
+            if (reportIndex !== -1) {
+                const rep = appData.reports[reportIndex];
+                appData.reports.splice(reportIndex, 1);
+                if (!appData.notifications[rep.reporter]) {
+                    appData.notifications[rep.reporter] = [];
+                }
+                const notifText = "Your report is not accepted";
+                appData.notifications[rep.reporter].push({ id: Date.now(), text: notifText });
+                saveAppData(appData);
+                if (chatChannel) {
+                    chatChannel.postMessage({ type: 'notification', targetUser: rep.reporter, text: notifText });
+                }
+                openAdminModal();
+                alert("Report dismissed and notification sent to the user.");
+            }
+        }
+        function openNotificationsModal() {
+            const appData = getAppData();
+            const listEl = document.getElementById('notifications-list');
+            listEl.innerHTML = '';
+            const userNotifs = (appData.notifications && appData.notifications[currentUser]) ? appData.notifications[currentUser] : [];
+            if (userNotifs.length === 0) {
+                listEl.innerHTML = `<p class="text-xs text-slate-400 italic">No notifications yet.</p>`;
+            } else {
+                userNotifs.slice().reverse().forEach(notif => {
+                    const item = document.createElement('div');
+                    item.className = "bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-200 flex items-center justify-between";
+                    item.innerHTML = `
+                        <span class="flex-1 pr-2">🔔 ${escapeHtml(notif.text)}</span>
+                        <button onclick="deleteNotification(${notif.id})"
+                            class="text-slate-500 hover:text-red-400 text-xs px-1.5 py-0.5 rounded transition"
+                            title="Delete notification">🗑️</button>
+                    `;
+                    listEl.appendChild(item);
+                });
+            }
+            document.getElementById('notifications-modal').classList.add('hidden');
+            document.getElementById('notifications-modal').classList.remove('hidden');
+        }
+        function deleteNotification(notificationId) {
+            const appData = getAppData();
+            if (!appData.notifications || !Array.isArray(appData.notifications[currentUser])) return;
+            appData.notifications[currentUser] =
+                appData.notifications[currentUser].filter(notif => notif.id !== notificationId);
+            saveAppData(appData);
+            openNotificationsModal();
+        }
+        function closeNotificationsModal() {
+            document.getElementById('notifications-modal').classList.add('hidden');
+        }
+        function addUserNotification(text) {
+            const appData = getAppData();
+            if (!appData.notifications) appData.notifications = {};
+            if (!appData.notifications[currentUser]) {
+                appData.notifications[currentUser] = [];
+            }
+            appData.notifications[currentUser].push({ id: Date.now(), text: text });
+            saveAppData(appData);
+        }
+        function formatMessageDateTime(value) {
+            const date = new Date(value || Date.now());
+            if (Number.isNaN(date.getTime())) return "";
+            return new Intl.DateTimeFormat(undefined, {
+                year: "numeric", month: "2-digit", day: "2-digit",
+                hour: "2-digit", minute: "2-digit", hour12: false
+            }).format(date);
+        }
+
+        function displayMessage(message) {
+            const chatMessages = document.getElementById('chat-messages');
+            const rowDiv = document.createElement('div');
+            if (!message.timestamp) message.timestamp = Date.now();
+            const messageDateTime = formatMessageDateTime(message.timestamp);
+            const isSystem = message.user_name === "System";
+            if (isSystem) {
+                rowDiv.className = "flex justify-start my-2";
+                rowDiv.innerHTML = `<div class="text-xs text-slate-400 italic">${escapeHtml(message.text)}<div class="message-datetime">${escapeHtml(messageDateTime)}</div></div>`;
+            } else {
+                rowDiv.className = "flex items-start justify-between group my-3";
+                const safeUser = escapeHtml(message.user_name || "");
+                const avatarMarkup = getAvatarMarkup(message.user_name || "Unknown");
+                let contentHtml = "";
+                if (message.isImage) {
+                    contentHtml = `<div class="recorded-message mt-2"><div class="recorded-message-inner media-message-inner"><img src="${message.text}" alt="Uploaded Image" class="media-display image-display"></div></div>`;
+                } else if (message.isGif) {
+                    const gifSrc = message.gifUrl || "";
+                    contentHtml = `<div class="recorded-message mt-2"><div class="recorded-message-inner media-message-inner"><div class="gif-message-slot">${gifSrc ? `<img src="${escapeHtml(gifSrc)}" alt="${escapeHtml(message.gifName || "GIF")}" class="media-display gif-display" loading="lazy">` : ""}</div></div></div>`;
+                } else if (message.isVideo) {
+                    const segmentCount = Array.isArray(message.segmentIds) && message.segmentIds.length ? message.segmentIds.length : 0;
+                    const longLabel = segmentCount > 1 ? `<div class="text-[11px] text-slate-400 mb-1">Long video • ${segmentCount} parts</div>` : "";
+                    contentHtml = `<div class="mt-2">${longLabel}<div class="recorded-message"><div class="recorded-message-inner media-message-inner"><div class="segmented-video-list"></div></div></div></div>`;
+                } else if (message.isAudio) {
+                    const audioType = escapeHtml(message.audioType || 'audio/webm');
+                    contentHtml = `<div class="recorded-message mt-2"><div class="recorded-message-inner"><audio controls preload="metadata" class="chat-audio"><source src="${message.text}" type="${audioType}">Your browser does not support audio playback.</audio></div></div>`;
+                } else {
+                    const safeText = escapeHtml(message.text || "");
+                    contentHtml = `<div class="text-sm text-slate-300 mt-0.5 whitespace-pre-wrap">${safeText}</div>`;
+                }
+                rowDiv.innerHTML = `
+                    <div class="flex items-start gap-3 flex-1">
+                        ${avatarMarkup}
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <div class="font-bold text-sm text-slate-200">${safeUser}</div>
+                                <button onclick="openReportModal('${safeUser}', '${message.isImage ? '[Image]' : (message.isGif ? '[GIF]' : (message.isVideo ? '[Video]' : (message.isAudio ? '[Audio]' : escapeHtml(message.text)))).replace(/'/g, "\\'")}')" class="text-slate-500 hover:text-red-400 text-xs px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition flex items-center gap-1">🚨 Report</button>
+                            </div>
+                            ${contentHtml}
+                            <div class="message-datetime">${escapeHtml(messageDateTime)}</div>
+                        </div>
+                    </div>
+                `;
+                if (message.isGif && message.gifProvider === "giphy" && message.gifAnalytics) {
+                    registerGiphyAction({ analytics: message.gifAnalytics }, "onload");
+                    const gifImage = rowDiv.querySelector('.gif-message-slot img');
+                    if (gifImage) gifImage.addEventListener('click', () => registerGiphyAction({ analytics: message.gifAnalytics }, "onclick"));
+                } else if (message.isGif && !message.gifUrl && message.gifId) {
+                    const slot = rowDiv.querySelector('.gif-message-slot');
+                    getGifBlob(message.gifId).then(blob => {
+                        if (!slot || !blob) return;
+                        const url = URL.createObjectURL(blob);
+                        const img = document.createElement('img');
+                        img.src = url; img.alt = message.gifName || 'GIF';
+                        img.className = 'w-full max-w-xs max-h-80 object-contain block';
+                        slot.appendChild(img);
+                    });
+                } else if (message.isVideo) {
+                    const listEl = rowDiv.querySelector('.segmented-video-list');
+                    const showVideoError = () => {
+                        if (rowDiv.querySelector('.video-playback-error')) return;
+                        listEl.insertAdjacentHTML('afterend', `<div class="video-playback-error text-xs text-red-300 p-2">This video could not be played in this browser.</div>`);
+                    };
+                    const ids = Array.isArray(message.segmentIds) ? message.segmentIds : [];
+                    if (listEl && ids.length) {
+                        ids.forEach((id, index) => {
+                            getVideoBlob(id).then(blob => {
+                                if (!blob) return showVideoError();
+                                const url = URL.createObjectURL(blob);
+                                const videoEl = document.createElement('video');
+                                videoEl.controls = true;
+                                videoEl.playsInline = true;
+                                videoEl.preload = 'metadata';
+                                videoEl.className = 'chat-video w-full max-w-xs max-h-80 rounded-xl bg-slate-900 block' + (index ? ' mt-1' : '');
+                                videoEl.dataset.objectUrl = url;
+                                videoEl.setAttribute('aria-label', `Video part ${index + 1}`);
+                                videoEl.src = url;
+                                videoEl.addEventListener('error', showVideoError, { once: true });
+                                videoEl.addEventListener('emptied', () => URL.revokeObjectURL(url), { once: true });
+                                listEl.appendChild(videoEl);
+                            });
+                        });
+                    } else if (message.mediaId) {
+                        getVideoBlob(message.mediaId).then(blob => {
+                            if (!blob) return showVideoError();
+                            const url = URL.createObjectURL(blob);
+                            const videoEl = document.createElement('video');
+                            videoEl.controls = true;
+                            videoEl.playsInline = true;
+                            videoEl.preload = 'auto';
+                            videoEl.className = 'chat-video w-full max-w-xs max-h-80 rounded-xl bg-slate-900 block';
+                            videoEl.src = url;
+                            listEl.appendChild(videoEl);
+                            videoEl.addEventListener('emptied', () => URL.revokeObjectURL(url), { once: true });
+                            videoEl.addEventListener('error', showVideoError, { once: true });
+                        });
+                    } else if (message.text) {
+                        const videoEl = document.createElement('video');
+                        videoEl.controls = true;
+                        videoEl.playsInline = true;
+                        videoEl.preload = 'auto';
+                        videoEl.className = 'chat-video w-full max-w-xs max-h-80 rounded-xl bg-slate-900 block';
+                        videoEl.src = message.text;
+                        listEl.appendChild(videoEl);
+                        videoEl.addEventListener('error', showVideoError, { once: true });
+                    } else {
+                        showVideoError();
+                    }
+                }
+            }
+            chatMessages.appendChild(rowDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        function getAvatarColor(name) {
+            const colors = ['bg-amber-600', 'bg-blue-600', 'bg-emerald-600', 'bg-cyan-600', 'bg-indigo-600', 'bg-pink-600', 'bg-purple-600', 'bg-red-600', 'bg-yellow-600', 'bg-orange-600', 'bg-brown-600', 'bg-beige-600'];
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = name.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return colors[Math.abs(hash) % colors.length];
+        }
+        function escapeHtml(text) {
+            if (typeof text !== 'string') return text;
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+        document.getElementById('message-input').addEventListener('keydown', function(e) {
+            if(e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                submitMessage();
+            }
+        });
+        document.getElementById('room-name-input').addEventListener('keydown', function(e) {
+            if(e.key === 'Enter') {
+                e.preventDefault();
+                joinRoom();
+            }
+        });
+    </script>
+</body>
+&copy; 2026 Sigui Yohan
+</html>
